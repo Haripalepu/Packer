@@ -1,0 +1,14 @@
+{
+    "client_id": "<REPLACE_WITH_YOUR_CLIENT_ID>",
+    "client_secret": "<REPLACE_WITH_YOUR_CLIENT_SECRET>",
+    "tenant_id": "<REPLACE_WITH_YOUR_TENANT_ID>",
+    "subscription_id": "<REPLACE_WITH_YOUR_SUBSCRIPTION_ID>",
+    "managed_image_name": "azureb24packerimage",
+    "managed_image_resource_group_name": "HUBRG",
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "18.04-LTS",
+    "location": "eastus",
+    "vm_size": "Standard_B1s"
+}

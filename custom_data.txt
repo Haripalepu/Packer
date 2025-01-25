@@ -1,0 +1,10 @@
+#cloud-config
+runcmd:
+  - ansible-playbook /myrepo/playbook.yaml
+
+
+.\packer.exe hcl2_upgrade .\1-packer.json
+Create pkrvars.hcl file and update variable values.
+.\packer.exe init .\packer.json.pkr.hcl
+.\packer.exe build --var-file .\pkrvars.hcl .\packer.json.pkr.hcl
+

@@ -1,0 +1,82 @@
+{
+    "_comment": "Create a Azure Image with Ubuntu 20.04",
+    "variables": {
+        "client_id": "",
+        "client_secret": "",
+        "tenant_id": "",
+        "subscription_id": "",
+        "location": "",
+        "vm_size": "",
+        "image_sku": "",
+        "image_publisher": "",
+        "image_offer": "",
+        "os_type": "",
+        "managed_image_name": "",
+        "managed_image_resource_group_name": ""
+    },
+    "_comment1": "packer build -var \"client_secret=foo\" packer.json",
+    "_comment2": "packer build -var-file packer-vars.json packer.json",
+    "builders": [
+        {
+            "type": "azure-arm",
+            "client_id": "{{user `client_id`}}",
+            "client_secret": "{{user `client_secret`}}",
+            "tenant_id": "{{user `tenant_id`}}",
+            "subscription_id": "{{user `subscription_id`}}",
+            "managed_image_name": "{{user `managed_image_name`}}",
+            "managed_image_resource_group_name": "{{user `managed_image_resource_group_name`}}",
+            "os_type": "{{user `os_type`}}",
+            "image_publisher": "{{user `image_publisher`}}",
+            "image_offer": "{{user `image_offer`}}",
+            "image_sku": "{{user `image_sku`}}",
+            "location": "{{user `location`}}",
+            "vm_size": "{{user `vm_size`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo useradd --no-create-home --shell /bin/false node_exporter",
+                "wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz",
+                "tar xvf node_exporter-1.3.1.linux-amd64.tar.gz",
+                "sudo cp node_exporter-1.3.1.linux-amd64/node_exporter /usr/local/bin/",
+                "sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "node_exporter.service",
+            "destination": "/tmp/node_exporter.service"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo cp /tmp/node_exporter.service /lib/systemd/system/node_exporter.service",
+                "sudo systemctl daemon-reload",
+                "sudo systemctl start node_exporter",
+                "sudo systemctl restart node_exporter",
+                "sudo systemctl enable node_exporter",
+                "sudo systemctl status node_exporter",
+                "rm -rf node_exporter*"
+            ]
+        },
+        {
+            "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+            "inline": [
+                "sudo apt update",
+                "sudo apt install software-properties-common -y",
+                "sudo apt-add-repository --yes --update ppa:ansible/ansible",
+                "sudo apt update",
+                "sudo apt install ansible -y",
+                "sudo apt install nginx -y",
+                "sudo apt install python-apt -y",
+                "sudo apt install -y git stress htop",
+                "sudo git clone -b azure-vmss-autoscaling https://github.com/mavrick202/ansibletemplatetesting.git /myrepo",
+                "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+            ],
+            "inline_shebang": "/bin/sh -x",
+            "type": "shell"
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "_comment": "Create a Azure Image with Ubuntu 20.04",
+    "variables": {
+        "client_id": "",
+        "client_secret": "",
+        "tenant_id": "",
+        "subscription_id": "",
+        "location": "",
+        "vm_size": "",
+        "image_sku": "",
+        "image_publisher": "",
+        "image_offer": "",
+        "os_type": "",
+        "managed_image_name": "",
+        "managed_image_resource_group_name": ""
+    },
+    "_comment1": "packer build -var \"client_secret=foo\" packer.json",
+    "_comment2": "packer build -var-file packer-vars.json packer.json",
+    "builders": [
+        {
+            "type": "azure-arm",
+            "client_id": "{{user `client_id`}}",
+            "client_secret": "{{user `client_secret`}}",
+            "tenant_id": "{{user `tenant_id`}}",
+            "subscription_id": "{{user `subscription_id`}}",
+            "managed_image_name": "{{user `managed_image_name`}}",
+            "managed_image_resource_group_name": "{{user `managed_image_resource_group_name`}}",
+            "os_type": "{{user `os_type`}}",
+            "image_publisher": "{{user `image_publisher`}}",
+            "image_offer": "{{user `image_offer`}}",
+            "image_sku": "{{user `image_sku`}}",
+            "location": "{{user `location`}}",
+            "vm_size": "{{user `vm_size`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+            "inline": [
+                "sudo apt update",
+                "sudo apt install software-properties-common -y",
+                "sudo apt-add-repository --yes --update ppa:ansible/ansible",
+                "sudo apt update",
+                "sudo apt install ansible -y",
+                "sudo apt install nginx -y",
+                "sudo apt install python-apt -y",
+                "sudo apt install -y git stress htop",
+                "sudo git clone -b azure-vmss-autoscaling https://github.com/mavrick202/ansibletemplatetesting.git /myrepo",
+                "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+            ],
+            "inline_shebang": "/bin/sh -x",
+            "type": "shell"
+        }
+    ]
+}
