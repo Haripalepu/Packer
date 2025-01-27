@@ -45,7 +45,7 @@
                 "sudo apt install nginx -y",
                 "sudo apt install python-apt -y",
                 "sudo apt install -y git stress htop",
-                "sudo git clone -b azure-vmss-autoscaling https://github.com/mavrick202/ansibletemplatetesting.git /myrepo",
+                "sudo git clone -b azure-vmss-autoscaling https://github.com/Haripalepu/Packer_ansible_template.git /myrepo",
                 "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
             ],
             "inline_shebang": "/bin/sh -x",
